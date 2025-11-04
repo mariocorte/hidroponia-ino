@@ -15,15 +15,26 @@ bool pumpRunning = false;
 bool firstRun = true;
 
 void setup() {
+  Serial.begin(9600);
+#if defined(USBCON) || defined(ARDUINO_ARCH_SAMD) || defined(ARDUINO_ARCH_RP2040)
+  while (!Serial) {
+    delay(10);
+  }
+#endif
+
+  Serial.println(F("Iniciando Adafruit Motor Shield..."));
   if (!motorShield.begin()) {
     // Si el shield no se inicializa, permaneceremos sin activar la bomba
+    Serial.println(F("Error: no se pudo inicializar el Motor Shield. La bomba permanecerá apagada."));
     while (true) {
       delay(1000);
     }
   }
 
+  Serial.println(F("Motor Shield inicializado correctamente."));
   pumpMotor->setSpeed(PUMP_SPEED);
   pumpMotor->run(RELEASE);
+  Serial.println(F("Bomba apagada (modo espera)."));
 }
 
 void loop() {
@@ -33,6 +44,7 @@ void loop() {
     if (currentMillis - lastPumpStart >= PUMP_DURATION) {
       pumpMotor->run(RELEASE);
       pumpRunning = false;
+      Serial.println(F("Bomba apagada tras finalizar el riego."));
     }
   } else {
     if (firstRun || currentMillis - lastPumpStart >= PUMP_INTERVAL) {
@@ -41,6 +53,7 @@ void loop() {
       lastPumpStart = currentMillis;
       pumpRunning = true;
       firstRun = false;
+      Serial.println(F("Bomba encendida: iniciando riego."));
     }
   }
 }
