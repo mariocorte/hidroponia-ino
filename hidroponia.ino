@@ -1,6 +1,6 @@
 // Control de bomba con Adafruit Motor Shield v1
 #include <Wire.h>
-#include <AFMotor.h>
+#include <AFMotor_R4.h>
 
 const uint8_t PUMP1_MOTOR_PORT = 1;                        // Puerto M1 del shield
 const uint8_t PUMP2_MOTOR_PORT = 2;                        // Puerto M2 del shield
